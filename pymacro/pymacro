@@ -3,8 +3,6 @@
 import sys
 import re
 
-SEPARATORS = [' ', '\n', 's']
-
 
 def get_args():
     """ Get command line arguments """
