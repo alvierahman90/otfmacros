@@ -2,7 +2,6 @@
 
 import sys
 import re
-import word_utils as words
 
 SEPARATORS = [' ', '\n', 's']
 
@@ -12,11 +11,29 @@ def get_args():
 
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("-m", "--macros", default=["macros"], action="append", help="Extra files where macros are stored")
-    parser.add_argument("-s", "--silent", default=False, action="store_true", help="Do not print processed file")
+    parser.add_argument("-m", "--macros", default=["macros"], action="append",
+                        help="Extra files where macros are stored")
+    parser.add_argument("-s", "--silent", default=False, action="store_true",
+                        help="Do not print processed file")
     parser.add_argument("input", help="The file to be processed")
     parser.add_argument("output", help="The location of the output")
     return parser.parse_args()
+
+
+def is_consonant(letter):
+    if not isinstance(letter, str):
+        raise ValueError("Argument 'letter' must be type str")
+    if len(letter) != 1:
+        raise ValueError("Argument 'letter' must be 1 long")
+    return not is_vowel(letter)
+
+
+def is_vowel(letter):
+    if not isinstance(letter, str):
+        raise ValueError("Argument 'letter' must be type str")
+    if len(letter) != 1:
+        raise ValueError("Argument 'letter' must be 1 long")
+    return letter in 'aeiou'
 
 
 def pluralize(word, macro=None):
@@ -32,14 +49,15 @@ def pluralize(word, macro=None):
     if word[-1] in 'sxz' or word[-2:] in ['ch', 'sh']:
         return word + 'es'
     if word[-1] == 'y':
-        if words.is_consonant(word[-2]):
+        if is_consonant(word[-2]):
             return word[:-1] + 'ies'
     if word[-1] == 'o':
-        if words.is_consonant(word[-2]):
+        if is_consonant(word[-2]):
             return word + 'es'
     if word[-1] == 'f':
         return word[:-1] + 'ves'
     return word + 's'
+
 
 def upper_check(token, word):
     lowercase = False
@@ -58,6 +76,7 @@ def upper_check(token, word):
 
     return word
 
+
 def process(tokens, macros):
     output = tokens
 
@@ -71,39 +90,34 @@ def process(tokens, macros):
             # TODO add better end stripping
             full_stopped = False
             if token[-1] == '.':
-                full_stopped  = True
+                full_stopped = True
                 token = token[:-1]
-            
-            match = False
-            plural = False
-            
-            # if no macro is found (or if it is not a macro at all, the value 
+
+            # if no macro is found (or if it is not a macro at all, the value
             # will not be changed
             value = token
 
             for macro in macros:
                 if macro[0].lower() == token.lower():
-                    match = True
                     value = macro[1]
                     break
                 elif macro[0].lower() + 's' == token.lower():
-                    match = True
-                    plural = True
                     value = pluralize(macro[1], macro=macro)
                     break
 
             output[line_number][token_number] = upper_check(token, value)
-            
+
             # re-adding the full stop/period
             if full_stopped:
                 output[line_number][token_number] += '.'
-    
+
     for line_number, line in enumerate(output):
         output[line_number] = ' '.join(line)
 
     output = '\n'.join(output)
 
     return output
+
 
 def tokenize(input):
     """
@@ -129,6 +143,7 @@ def get_macros(input):
             macros.pop(index)
 
     return macros
+
 
 def main(args):
     """ Entry point for script """
