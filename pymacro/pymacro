@@ -81,13 +81,17 @@ def process(tokens, macros):
             if len(token) == 0:
                 continue
 
-            # punctuation is ignored so it is stripped till later
-            # right now only full stops are stripped because I'm lazy
-            # TODO add better end stripping
-            full_stopped = False
-            if token[-1] == '.':
-                full_stopped = True
-                token = token[:-1]
+            
+            # cutting of the end and then adding it back once expanded
+            end = []
+            token = list(token)
+            for index, char in reversed(list(enumerate(token))):
+                if not char.isalnum():
+                    end.insert(0, token.pop(index))
+                else:
+                    break
+            end = ''.join(end)
+            token = ''.join(token)
 
             # if no macro is found (or if it is not a macro at all, the value
             # will not be changed
@@ -103,9 +107,8 @@ def process(tokens, macros):
 
             output[line_number][token_number] = upper_check(token, value)
 
-            # re-adding the full stop/period
-            if full_stopped:
-                output[line_number][token_number] += '.'
+            # re adding what was trimmed off
+            output[line_number][token_number] += end
 
     for line_number, line in enumerate(output):
         output[line_number] = ' '.join(line)
