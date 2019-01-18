@@ -4,7 +4,7 @@ How to define macros and what not to define.
 
 ## definition of simple macros
 Macros are defined in a separate file, by default called `macros`.
-You can change/add additional macro files through the command line options.
+You can add additional macro files through the command line options.
 
 Examples of macro definitions:
 
