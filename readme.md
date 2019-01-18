@@ -1,6 +1,6 @@
 # macros
 
-A syntax/specification for defining macros in any sort of text file.
+A syntax/specification for defining macros for any sort of text file.
 The goal of this is to be minimal but intuitive and with enough features to make
 it worth using. It doesn't come with any features that you won't be using really
 regularly. 
