@@ -1,12 +1,12 @@
-.Hcs are composed of exclusively .h and .c.
+.Hcs are composed of exclusively .hy and .ca.
 
 .Chl is the site of .ps.
 
 :wink:
 
 1 .hc 2 .hcs
-1 .d 2 .ds
-1 .s 2 .ss
+1 .dr 2 .drs
+1 .st 2 .sts
 1 .he 2 .hes
-1 .l 2 .ls
-1 .m 2 .ms
+1 .le 2 .les
+1 .ma 2 .mas
