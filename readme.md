@@ -17,3 +17,7 @@ overly relying on pronouns if it would make the writing less clear.
 ## syntax
 
 The syntax can be found [here](syntax.md)
+
+## python implementation
+
+A python implementation can be found [here](pymacro/)
