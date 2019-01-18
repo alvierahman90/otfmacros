@@ -18,10 +18,15 @@ def get_args():
     return parser.parse_args()
 
 
-def pluralize(word):
+def pluralize(word, macro=None):
     """
     Returns the plural form of a word.
     """
+
+    if macro:
+        if len(macro) == 3:
+            return macro[2]
+
     # TODO add more complex plural forms
     if word[-1] in 'sxz' or word[-2:] in ['ch', 'sh']:
         return word + 'es'
@@ -83,7 +88,7 @@ def process(tokens, macros):
                 elif macro[0].lower() + 's' == token.lower():
                     match = True
                     plural = True
-                    value = pluralize(macro[1])
+                    value = pluralize(macro[1], macro=macro)
                     break
 
             output[line_number][token_number] = upper_check(token, value)
@@ -117,7 +122,7 @@ def get_macros(input):
 
     # validate macros
     for index, macro in enumerate(macros):
-        if len(macro) == 2:
+        if len(macro) == 2 or len(macro) == 3:
             macros[index] = tuple(macros[index])
         else:
             macros.pop(index)
