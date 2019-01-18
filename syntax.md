@@ -41,7 +41,7 @@ And the file `test.md`:
 ```markdown
 # .Hc
 In organic chemistry, a .hc is an organic compound consisting entirely of 
-.h and .c. .Hcs are examples of group 14 hydrides. 
+hydrogen and carbon. .Hcs are examples of group 14 hydrides. 
 ```
 
 The output would be the following:
