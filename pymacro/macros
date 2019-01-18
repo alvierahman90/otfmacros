@@ -3,3 +3,6 @@
 .ca carbon
 .ox	oxygen
 :wink:	😉
+source tests/test_macros_biology
+source tests/test_macros_custom_plurals
+source tests/test_macros_plural

@@ -129,18 +129,20 @@ def get_macros(input):
     """
     Turn a string into a list of tuples of macros
     """
+    response = []
 
     # turn input into unvalidated list of macros
     macros = [re.split('[ \t]', x) for x in input.split('\n')]
 
     # validate macros
     for index, macro in enumerate(macros):
+        if macro[0] == "source":
+            with open(macro[1]) as file:
+                response += get_macros(file.read())
         if len(macro) == 2 or len(macro) == 3:
-            macros[index] = tuple(macros[index])
-        else:
-            macros.pop(index)
+            response.append(tuple(macros[index]))
 
-    return macros
+    return response
 
 
 def main(args):
