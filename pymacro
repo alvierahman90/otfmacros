@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+
+import sys
+import re
+
+SEPARATORS = [' ', '\n', 's']
+
+
+def get_args():
+    """ Get command line arguments """
+
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-m", "--macros", default=["macros"], action="append")
+    parser.add_argument("input")
+    parser.add_argument("output")
+    return parser.parse_args()
+
+
+def main(args):
+    """ Entry point for script """
+    macros = []
+    for macro_file in args.macros:
+        with open(macro_file) as file:
+            macros += [x.split('\t') for x in file.read().split('\n')]
+
+    for index, macro in enumerate(macros):
+        if len(macro) != 2:
+            macros.pop(index)
+            continue
+        macros[index] = tuple(macros[index])
+
+    macros.sort(key=lambda tup: len(tup[0]), reverse=True)
+    
+    with open(args.input) as file:
+        input = file.read()
+
+    for macro in macros:
+        pattern, repl = macro
+        print(macro)
+        for separator in SEPARATORS:
+            input = input.replace(pattern + separator, repl + separator)
+
+    output = input
+
+    with open(args.output, 'w+') as file:
+        file.write(output)
+
+    print(output)
+
+    return 0
+
+
+if __name__ == '__main__':
+    try:
+        sys.exit(main(get_args()))
+    except KeyboardInterrupt:
+        sys.exit(0)
