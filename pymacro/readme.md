@@ -14,7 +14,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -m MACROS, --macros MACROS
                         Extra files where macros are stored
-  -s, --silent          Do not print processed file
+  -q, --quiet           Do not print processed file
 
 ```
 
