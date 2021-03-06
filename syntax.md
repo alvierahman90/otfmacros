@@ -30,6 +30,31 @@ This sources macros from its parent and grandparent directories.
 This may be useful if you have several related topics in separate folders,
 but only some of the macros are shared and some are not.
 
+### on the fly definitions
+
+You can also define macros in the middle of a sentence without having to switch to the macros file.
+The last word of multi-word macros must end with `.,`  or `,.` and end on the same line.
+
+```
+# .Hc hydrocarbon
+In or
+In organic chemistry, a .hc is an .oc organic compound., consisting entirely of
+hydrogen and carbon. .Hcs are examples of group 14 hydrides.
+
+
+.Ocs are compounds which contain .c .h bonds.
+```
+
+The output would be the following:
+
+```markdown
+# Hydrocarbon
+In organic chemistry, a hydrocarbon is an organic compound consisting entirely
+of hydrogen and carbon. Hydrocarbons are examples of group 14 hydrides.
+
+Organic compounds are compounds which contain carbon hydrogen bonds.
+```
+
 ## plurals
 
 Say you only have the following macro definitions:
@@ -40,8 +65,8 @@ And the file `test.md`:
 
 ```markdown
 # .Hc
-In organic chemistry, a .hc is an organic compound consisting entirely of 
-hydrogen and carbon. .Hcs are examples of group 14 hydrides. 
+In organic chemistry, a .hc is an organic compound consisting entirely of
+hydrogen and carbon. .Hcs are examples of group 14 hydrides.
 ```
 
 The output would be the following:
@@ -49,14 +74,14 @@ The output would be the following:
 ```markdown
 # Hydrocarbon
 In organic chemistry, a hydrocarbon is an organic compound consisting entirely
-of hydrogen and carbon. Hydrocarbons are examples of group 14 hydrides. 
+of hydrogen and carbon. Hydrocarbons are examples of group 14 hydrides.
 ```
 
 Note how `.hcs` becomes `hydrocarbons` even though that isn't explicitly
 defined. This helps you avoid adding the plural forms of words.
 
 
-### other default plurals 
+### other default plurals
 
 There are also other default plurals:
 
@@ -102,12 +127,12 @@ plural version at all and forgo defining a custom plural altogether.
 ## capitalization
 
 - Capitalizing the first character of a macro makes the first letter of the word
-also capitalized. 
+also capitalized.
 - Capitalizing every letter makes the whole word capitalized also, except if the
-shortcut is only one word long. 
+shortcut is only one word long.
 - For this reason, you may not want to use one letter definitions.
 - This also means that macro definitions are case insensitive and are completely
-ignored. 
+ignored.
 
 Say you have the following macros:
 
