@@ -26,14 +26,6 @@ def get_args():
     return parser.parse_args()
 
 
-def is_consonant(letter):
-    if not isinstance(letter, str):
-        raise ValueError("Argument 'letter' must be type str")
-    if len(letter) != 1:
-        raise ValueError("Argument 'letter' must be 1 long")
-    return not is_vowel(letter)
-
-
 def is_vowel(letter):
     if not isinstance(letter, str):
         raise ValueError("Argument 'letter' must be type str")
@@ -50,10 +42,10 @@ def pluralize(word):
     if word[-1] in 'sxz' or word[-2:] in ['ch', 'sh']:
         return word + 'es'
     if word[-1] == 'y':
-        if is_consonant(word[-2]):
+        if not is_vowel(word[-2]):
             return word[:-1] + 'ies'
     if word[-1] == 'o':
-        if is_consonant(word[-2]):
+        if not is_vowel(word[-2]):
             return word + 'es'
     if word[-1] == 'f':
         return word[:-1] + 'ves'
