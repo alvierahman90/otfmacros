@@ -26,15 +26,24 @@ def get_args():
     return parser.parse_args()
 
 
-def pluralize(word):
+def pluralize(input):
     """ Returns the plural form of a word.  """
+    if isinstance(input, list):
+        # use custom plural if defined
+        if len(input) > 1:
+            return input[1]
+
+        return pluralize_word(input[0])
+
+    return pluralize_word(input)
+
+def pluralize_word(word):
     def is_vowel(letter):
         if not isinstance(letter, str):
             raise ValueError("Argument 'letter' must be type str")
         if len(letter) != 1:
             raise ValueError("Argument 'letter' must be 1 long")
         return letter in 'aeiou'
-
 
     # TODO add more complex plural forms
     if word[-1] in 'sxz' or word[-2:] in ['ch', 'sh']:
@@ -130,7 +139,7 @@ def process(input, macros):
             value = token
 
             if token.lower() in macros.keys():
-                value = macros[token.lower()]
+                value = macros[token.lower()][0]
             elif token.lower() in [f"{m}s" for m in macros.keys()]:
                 value = pluralize(macros[token.lower()[:-1]])
 
@@ -193,7 +202,7 @@ def get_macros(input, child=False):
     # store macros as dict and return
     for index, macro in enumerate(macros):
         if len(macro) >= 2:
-            response[macro[0].lower()] = macro[1]
+            response[macro[0].lower()] = macro[1:]
     return response
 
 def is_otf_macro_start(token, line):
