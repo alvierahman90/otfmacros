@@ -55,6 +55,9 @@ of hydrogen and carbon. Hydrocarbons are examples of group 14 hydrides.
 Organic compounds are compounds which contain carbon hydrogen bonds.
 ```
 
+Otf macros can be overwritten later in the document.
+They also take precedence of any macros defined in the `macros` file.
+
 ## plurals
 
 Say you only have the following macro definitions:
@@ -89,7 +92,8 @@ Ending | Example | Formation | Plural
 --- | --- | --- | ---
 `s`, `ch`, `sh`, `x`, or `z` | dress | add es | dresses
 `[consonant]y` | story | change `y` to `ies` | stories
-`[consonant]o` | hero | add `es` | heroes
+`[consonant]o` | macro | add `s` | macros
+`[vowel]o` | hero | add `es` | heroes
 `f` | leaf | change `f` to `ves` | leaves
 
 
