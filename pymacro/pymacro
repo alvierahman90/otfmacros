@@ -42,15 +42,10 @@ def is_vowel(letter):
     return letter in 'aeiou'
 
 
-def pluralize(word, macro=None):
+def pluralize(word):
     """
     Returns the plural form of a word.
     """
-
-    if macro:
-        if len(macro) == 3:
-            return macro[2]
-
     # TODO add more complex plural forms
     if word[-1] in 'sxz' or word[-2:] in ['ch', 'sh']:
         return word + 'es'
@@ -84,16 +79,39 @@ def upper_check(token, word):
 
 
 def process(input, macros):
-    tokens, otf_macros = tokenize(input)
-    output = tokens
+    tokens = tokenize(input)
     macros = macros
-    
-    for key in otf_macros.keys():
-        macros[key] = otf_macros[key]
+
+    in_otf_macro = False
+    tmp_macro_keyword = None
+    tmp_macro_definition = []
 
     for line_number, line in enumerate(tokens):
         for token_number, token in enumerate(line):
             if len(token) == 0:
+                continue
+
+            # detect on the fly macros
+            token_is_otf_macro_start = is_otf_macro_start(token, line)
+
+            # process otf macro tokens
+            if token_is_otf_macro_start:
+                tmp_macro_keyword = token
+                in_otf_macro = True
+                tmp_macro_definition = []
+                tokens[line_number][token_number] = None
+                continue
+            elif in_otf_macro and is_otf_macro_end(token):
+                split_token = re.split(r',.|.,', token)
+                tmp_macro_definition.append(split_token[0])
+                macros[tmp_macro_keyword] = ' '.join(tmp_macro_definition)
+                token = tmp_macro_keyword + split_token[1]
+                in_otf_macro = False
+                # once the end of the macro has been found and stored, continue downn the for loop
+                # so that it can be turned back to normal text
+            elif in_otf_macro:
+                tmp_macro_definition.append(token)
+                tokens[line_number][token_number] = None
                 continue
 
             # cutting off the end and then adding it back once expanded
@@ -114,14 +132,17 @@ def process(input, macros):
             value = token
 
             if token.lower() in macros.keys():
-                value = macros[token]
-            elif f'{token.lower()}s' in macros.keys():
-                value = pluralize(macro[1], macro=macro)
+                value = macros[token.lower()]
+            elif token.lower() in [f"{m}s" for m in macros.keys()]:
+                value = pluralize(macros[token.lower()[:-1]])
 
-            output[line_number][token_number] = upper_check(token, value)
-            output[line_number][token_number] += end
+            tokens[line_number][token_number] = upper_check(token, value)
+            tokens[line_number][token_number] += end
 
-    return detokenize(output)
+        # filter out None tokens
+        tokens[line_number] = [token for token in tokens[line_number] if token is not None]
+
+    return detokenize(tokens)
 
 def tokenize(input):
     """
@@ -129,42 +150,7 @@ def tokenize(input):
     otf macro definitions are removed and just the keyword definition is kept as well as any
     punctuation on the final word.
     """
-    tokens =  [x.split(' ') for x in input.split('\n')]
-
-    otf_macros = {}
-    in_otf_macro = False
-    tmp_macro_keyword = None
-    tmp_macro_definition = []
-
-    # find and extract on the fly macros
-    for line_index, line in enumerate(tokens):
-        for token_index, token in enumerate(line):
-            token_is_otf_macro_start = is_otf_macro_start(token, line)
-            in_otf_macro = token_is_otf_macro_start or in_otf_macro
-
-            if token_is_otf_macro_start:
-                tmp_macro_keyword = token
-                tmp_macro_definition = []
-                tokens[line_index][token_index] = None
-                continue
-            elif in_otf_macro and is_otf_macro_end(token):
-                split_token = re.split(r',.|.,', token)
-                tmp_macro_definition.append(split_token[0])
-                tokens[line_index][token_index] = tmp_macro_keyword + split_token[1]
-                otf_macros[tmp_macro_keyword] = ' '.join(tmp_macro_definition)
-                in_otf_macro = False
-                continue
-            elif in_otf_macro:
-                tmp_macro_definition.append(token)
-                tokens[line_index][token_index] = None
-                continue
-
-        # filter out None tokens
-        tokens[line_index] = [token for token in tokens[line_index] if token is not None]
-
-    return tokens, otf_macros
-
-
+    return [x.split(' ') for x in input.split('\n')]
 
 
 def detokenize(tokens):
@@ -189,7 +175,7 @@ def detokenize(tokens):
     return  '\n'.join(output)
 
 
-def get_macros(input):
+def get_macros(input, child=False):
     """
     Turn a macros string into a list of tuples of macros
     """
@@ -202,14 +188,16 @@ def get_macros(input):
     for index, macro in enumerate(macros):
         if macro[0] == "source":
             with open(macro[1]) as file:
-                macros += get_macros(file.read())
+                macros += get_macros(file.read(), child=True)
                 macros[index] = ()
+
+    if child:
+        return macros
 
     # store macros as dict and return
     for index, macro in enumerate(macros):
         if len(macro) >= 2:
             response[macro[0].lower()] = macro[1]
-
     return response
 
 def is_otf_macro_start(token, line):
@@ -224,7 +212,7 @@ def is_otf_macro_start(token, line):
     for line_token in line:
         if is_otf_macro_end(line_token):
             return match is not None
-    
+
     return False
 
 
@@ -232,7 +220,7 @@ def is_otf_macro_end(token):
     """
     Returns true if token is the end of an on the fly macro
     """
-    match = re.search(r'(\.,|,\.)', token)
+    match = re.search(r'(\.,|,\.)', f"{token}")
     return match is not None
 
 

@@ -2,7 +2,7 @@
 
 .Chl is the site of .ps.
 
-:wink:
+.wink
 
 1 .hc 2 .hcs
 1 .dr 2 .drs
@@ -14,3 +14,8 @@
 This is a test of .otfm on the fly macro.,s!
 
 If this sentence makes sense, then the test of .otfms worked!
+
+.otfms can also be overwritten,
+you could make it equal .otfm on the fly monkey.,s!
+
+They're not just any monkeys, they're .otfms!
