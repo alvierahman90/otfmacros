@@ -26,18 +26,16 @@ def get_args():
     return parser.parse_args()
 
 
-def is_vowel(letter):
-    if not isinstance(letter, str):
-        raise ValueError("Argument 'letter' must be type str")
-    if len(letter) != 1:
-        raise ValueError("Argument 'letter' must be 1 long")
-    return letter in 'aeiou'
-
-
 def pluralize(word):
-    """
-    Returns the plural form of a word.
-    """
+    """ Returns the plural form of a word.  """
+    def is_vowel(letter):
+        if not isinstance(letter, str):
+            raise ValueError("Argument 'letter' must be type str")
+        if len(letter) != 1:
+            raise ValueError("Argument 'letter' must be 1 long")
+        return letter in 'aeiou'
+
+
     # TODO add more complex plural forms
     if word[-1] in 'sxz' or word[-2:] in ['ch', 'sh']:
         return word + 'es'
@@ -53,6 +51,7 @@ def pluralize(word):
 
 
 def upper_check(token, word):
+    """ Check if word needs to be capitalized and capitalise appropriately if that is the case. """
     all_caps = True
     
     for letter in token:
@@ -71,6 +70,13 @@ def upper_check(token, word):
 
 
 def process(input, macros):
+    """
+    This function takes the string `input` and a dict, ` macros`.
+    It substitutes any keys in `macro` with the corresponding value.
+    It also checks for any otf macros defined in the string and appends them to `macros`,
+    replacing that otf macro and any following instances of it.
+    It returns the substituted string.
+    """
     tokens = tokenize(input)
     macros = macros
 
@@ -168,9 +174,7 @@ def detokenize(tokens):
 
 
 def get_macros(input, child=False):
-    """
-    Turn a macros string into a list of tuples of macros
-    """
+    """ Turn a macros string into a list of tuples of macros """
     response = {}
 
     # turn input into list of tuples
@@ -193,9 +197,7 @@ def get_macros(input, child=False):
     return response
 
 def is_otf_macro_start(token, line):
-    """
-    Returns true if token is the start of an on the fly macro
-    """
+    """ Returns true if token is the start of an on the fly macro """
     match = re.search(r'^\.[A-Za-z0-9]+$', token)
     if match is None:
         return False
@@ -209,9 +211,7 @@ def is_otf_macro_start(token, line):
 
 
 def is_otf_macro_end(token):
-    """
-    Returns true if token is the end of an on the fly macro
-    """
+    """ Returns true if token is the end of an on the fly macro """
     match = re.search(r'(\.,|,\.)', f"{token}")
     return match is not None
 
